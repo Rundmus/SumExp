@@ -21,10 +21,6 @@
 \alias{assay<-}
 \alias{assay<-,SumExp,ANY,matrix-method}
 \alias{[,SumExp-method}
-\alias{as_tibble}
-\alias{as_tibble,SumExp-method}
-\alias{ggplot}
-\alias{ggplot,SumExp-method}
 \title{An light S4 class for the matrices with additional information for columns and rows}
 \usage{
 row_df(x)
@@ -60,14 +56,6 @@ assay(x, i, ...) <- value
 \S4method{assay}{SumExp,ANY,matrix}(x, i, ...) <- value
 
 \S4method{[}{SumExp}(x, i, j, ..., drop = FALSE)
-
-as_tibble(x, ...)
-
-\S4method{as_tibble}{SumExp}(x, ...)
-
-ggplot(data, mapping = aes(), ..., environment = parent.frame())
-
-\S4method{ggplot}{SumExp}(data, mapping = aes(), ..., environment = parent.frame())
 }
 \arguments{
 \item{x}{A `SumExp` object}

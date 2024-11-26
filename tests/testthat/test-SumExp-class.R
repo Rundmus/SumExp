@@ -71,3 +71,12 @@ test_that("as_tibble works", {
   expect_equal(nrow(se_tbl), 20)
   expect_equal(ncol(se_tbl), 6)
 })
+
+test_that("labelled works" {
+  m2 <- labelled::set_label_attribute(m2, "matrix_b")
+  se <- SumExp(matrices = list(a = m1, b = m2), row_df = df_r, col_df = df_c)
+  expect_s4_class(se, "SumExp")
+  expect_equal(labelled::get_label_attribute(se[["b"]]), "matrix_b")
+  se_tbl <- as_tibble(se)
+  expect_equal(labelled::get_label_attribute(se_tbl[["b"]]), "matrix_b")
+})
