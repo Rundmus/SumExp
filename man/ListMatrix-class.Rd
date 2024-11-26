@@ -4,6 +4,7 @@
 \name{ListMatrix-class}
 \alias{ListMatrix-class}
 \alias{ListMatrix}
+\alias{as.list,ListMatrix-method}
 \alias{dim,ListMatrix-method}
 \alias{nrow}
 \alias{nrow,ListMatrix-method}
@@ -17,11 +18,10 @@
 \alias{rownames<-,ListMatrix-method}
 \alias{show,ListMatrix-method}
 \alias{print,ListMatrix-method}
-\alias{names,ListMatrix-method}
-\alias{[[,ListMatrix-method}
-\alias{[[<-,ListMatrix-method}
 \title{A class for storing a list of matrices}
 \usage{
+\S4method{as.list}{ListMatrix}(x)
+
 \S4method{dim}{ListMatrix}(x)
 
 nrow(x)
@@ -47,12 +47,6 @@ ncol(x)
 \S4method{show}{ListMatrix}(object)
 
 \S4method{print}{ListMatrix}(x)
-
-\S4method{names}{ListMatrix}(x)
-
-\S4method{[[}{ListMatrix}(x, i)
-
-\S4method{[[}{ListMatrix}(x, i) <- value
 }
 \arguments{
 \item{x}{A `ListMatrix` object}
@@ -63,6 +57,7 @@ A class for storing a list of matrices
 \section{Slots}{
 
 \describe{
-\item{\code{matrices}}{A list with the matrices}
+\item{\code{matrices}}{A list with matrices. All matrices must have the same dimensions and
+row/column names.}
 }}
 

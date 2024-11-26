@@ -1,17 +1,19 @@
 #' An light S4 class for the matrices with additional information for columns and rows
 #'
-#' @slot matrices A `ListMatrix` object, a list with the matrices
-#' @slot colData A data frame with additional information for columns
-#' @slot rowData A data frame with additional information for rows
+#' @slot matrices A list with matrices. All matrices must have the same dimensions and
+#'   row/column names.
+#' @slot col_df A data frame with additional information for columns
+#' @slot row_df A data frame with additional information for rows
 #' @slot metadata A `list` with any other additional information
 #'
 #' @exportClass SumExp
+#' @export
 SumExp <- setClass(
   "SumExp",
   contains = "ListMatrix",
   slots = c(
-    colData = "data.frame",
-    rowData = "data.frame",
+    col_df = "data.frame",
+    row_df = "data.frame",
     metadata = "list"
   )
 )
@@ -20,12 +22,12 @@ setMethod(
   "initialize", "SumExp",
   function(.Object,
            matrices = list(),
-           colData = data.frame(),
-           rowData = data.frame(),
+           col_df = data.frame(),
+           row_df = data.frame(),
            metadata = list()) {
     .Object@matrices <- matrices
-    .Object@colData <- colData
-    .Object@rowData <- rowData
+    .Object@col_df <- col_df
+    .Object@row_df <- row_df
     .Object@metadata <- metadata
     validObject(.Object)
     return(.Object)
@@ -34,36 +36,36 @@ setMethod(
 
 .valid_SumExp_lst_mat <- function(x) {
   if (any(is.null(names(x)))) return("Names of @matrices must be defined")
-  if (ncol(x) != nrow(x@colData)) {
-    return("Number of columns in @matrices must be equal to number of rows in @colData")
+  if (ncol(x) != nrow(x@col_df)) {
+    return("Number of columns in @matrices must be equal to number of rows in @col_df")
   }
-  if (any(colnames(x) != rownames(x@colData))) {
-    return("Column names in @matrices must be equal to row names in @colData")
+  if (any(colnames(x) != rownames(x@col_df))) {
+    return("Column names in @matrices must be equal to row names in @col_df")
   }
-  if (nrow(x) != nrow(x@rowData)) {
-    return("Number of rows in @matrices must be equal to number of rows in @rowData")
+  if (nrow(x) != nrow(x@row_df)) {
+    return("Number of rows in @matrices must be equal to number of rows in @row_df")
   }
-  if (any(rownames(x) != rownames(x@rowData))) {
-    return("Row names in @matrices must be equal to row names in @rowData")
+  if (any(rownames(x) != rownames(x@row_df))) {
+    return("Row names in @matrices must be equal to row names in @row_df")
   }
   NULL
 }
 
-.valid_SumExp_colData <- function(x) {
-  if (!is.data.frame(x@colData)) return("@colData must be a data frame")
+.valid_SumExp_col_df <- function(x) {
+  if (!is.data.frame(x@col_df)) return("@col_df must be a data frame")
   NULL
 }
 
-.valid_SumExp_rowData <- function(x) {
-  if (!is.data.frame(x@rowData)) return("@rowData must be a data frame")
+.valid_SumExp_row_df <- function(x) {
+  if (!is.data.frame(x@row_df)) return("@row_df must be a data frame")
   NULL
 }
 
 setValidity("SumExp", function(object) {
   er_m <- c(
     .valid_SumExp_lst_mat(object),
-    .valid_SumExp_rowData(object),
-    .valid_SumExp_colData(object)
+    .valid_SumExp_row_df(object),
+    .valid_SumExp_col_df(object)
   )
   if (!is.null(er_m)) return(er_m)
   TRUE
@@ -77,33 +79,33 @@ setValidity("SumExp", function(object) {
 #' @param x A `SumExp` object
 #' @rdname SumExp-class
 #' @export
-setGeneric("rowData", function(x) standardGeneric("rowData"))
+setGeneric("row_df", function(x) standardGeneric("row_df"))
 #' @rdname SumExp-class
 #' @export
-setMethod("rowData", signature(x = "SumExp"), function(x) x@rowData)
+setMethod("row_df", signature(x = "SumExp"), function(x) x@row_df)
 #' @rdname SumExp-class
 #' @export
-setGeneric("rowData<-", function(x, value) standardGeneric("rowData<-"))
+setGeneric("row_df<-", function(x, value) standardGeneric("row_df<-"))
 #' @rdname SumExp-class
 #' @export
-setMethod("rowData<-", signature(x = "SumExp", value = "data.frame"), function(x, value) {
-  x@rowData <- value
+setMethod("row_df<-", signature(x = "SumExp", value = "data.frame"), function(x, value) {
+  x@row_df <- value
   x
 })
 
 #' @rdname SumExp-class
 #' @export
-setGeneric("colData", function(x) standardGeneric("colData"))
+setGeneric("col_df", function(x) standardGeneric("col_df"))
 #' @rdname SumExp-class
 #' @export
-setMethod("colData", signature(x = "SumExp"), function(x) x@colData)
+setMethod("col_df", signature(x = "SumExp"), function(x) x@col_df)
 #' @rdname SumExp-class
 #' @export
-setGeneric("colData<-", function(x, value) standardGeneric("colData<-"))
+setGeneric("col_df<-", function(x, value) standardGeneric("col_df<-"))
 #' @rdname SumExp-class
 #' @export
-setMethod("colData<-", signature(x = "SumExp", value = "data.frame"), function(x, value) {
-  x@colData <- value
+setMethod("col_df<-", signature(x = "SumExp", value = "data.frame"), function(x, value) {
+  x@col_df <- value
   x
 })
 
@@ -145,19 +147,19 @@ setMethod("assay<-", signature(x = "SumExp", value = "matrix"), function(x, i, .
 #' @rdname SumExp-class
 #' @export
 setMethod(
-  "[", signature(x = "SumExp", i = "ANY", j = "ANY", drop = "ANY"),
+  "[", signature(x = "SumExp"),
   function(x, i, j, ..., drop = FALSE) {
     stopifnot("drop must be FALSE" = !drop)
     data_lst <- lapply(x@matrices, \(.x) {
       .x[i, j, drop = FALSE] |>
         labelled::copy_labels_from(.x)
     })
-    colData <- x@colData[j, , drop = FALSE] |>
-      labelled::copy_labels_from(x@colData)
-    rowData <- x@rowData[i, , drop = FALSE] |>
-      labelled::copy_labels_from(x@rowData)
+    col_df <- x@col_df[j, , drop = FALSE] |>
+      labelled::copy_labels_from(x@col_df)
+    row_df <- x@row_df[i, , drop = FALSE] |>
+      labelled::copy_labels_from(x@row_df)
     metadata <- x@metadata
-    new("SumExp", matrices = data_lst, colData = colData, rowData = rowData, metadata = metadata)
+    new("SumExp", matrices = data_lst, col_df = col_df, row_df = row_df, metadata = metadata)
   }
 )
 
@@ -172,8 +174,8 @@ setGeneric("as_tibble", function(x, ...) standardGeneric("as_tibble"))
 setMethod(
   "as_tibble", signature(x = "SumExp"),
   function(x, ...) {
-    col_tbl <- tibble::as_tibble(x@colData, rownames = ".col_id")
-    row_tbl <- tibble::as_tibble(x@rowData, rownames = ".row_id")
+    col_tbl <- tibble::as_tibble(x@col_df, rownames = ".col_id")
+    row_tbl <- tibble::as_tibble(x@row_df, rownames = ".row_id")
 
     stopifnot("Names of @matrices must be unique" = anyDuplicated(names(x@matrices)) == 0)
     mx <- lapply(names(x@matrices), \(ii) {

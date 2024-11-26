@@ -1,7 +1,9 @@
 #' A class for storing a list of matrices
 #'
-#' @slot matrices A list with the matrices
+#' @slot matrices A list with matrices. All matrices must have the same dimensions and
+#'   row/column names.
 #' @exportClass ListMatrix
+#' @export
 ListMatrix <- setClass(
   "ListMatrix",
   slots = c(matrices = "list")
@@ -18,9 +20,15 @@ setMethod(
 
 setValidity("ListMatrix", function(object) {
   for(ii in seq_along(object@matrices)) {
-    if (!is.matrix(object@matrices[[ii]])) return("All elements of @matrices must be matrices")
+    mat_ii <- object@matrices[[ii]]
+    if (!is.matrix(mat_ii)) return("All elements of @matrices must be matrices")
+    if (ncol(mat_ii) > 0 & is.null(colnames(mat_ii))) {
+      return("Column names in all matrices must be defined")
+    }
+    if (nrow(mat_ii) > 0 & is.null(rownames(mat_ii))) {
+      return("Row names in all matrices must be defined")
+    }
     if (ii > 1) {
-      mat_ii <- object@matrices[[ii]]
       mat_ii_1 <- object@matrices[[ii - 1]]
       if (!identical(dim(mat_ii), dim(mat_ii_1))) {
         return("Dimensions of all matrices must be equal")
@@ -38,8 +46,50 @@ setValidity("ListMatrix", function(object) {
 
 # Methods --------------------------------------------------------------------------------
 
-#' @param x A `ListMatrix` object
+#' Get the names of the matrices in a `ListMatrix`
 #'
+#' @param x A `ListMatrix` object
+#' @return `names` returns a character vector with the names of the matrices.
+#'    `name_labs` returns label attributes are attached as the names of the returned names, if
+#'    the matrices have label attributes by `labelled`,
+#' @name names
+#' @export
+setMethod("names", signature(x = "ListMatrix"), function(x) names(x@matrices))
+setGeneric("name_labs", function(x) standardGeneric("name_labs"))
+#' @rdname names
+#' @export
+setMethod("name_labs", signature(x = "ListMatrix"), function(x) {
+  nms <- names(x@matrices)
+  labs <- sapply(nms, \(.x) {
+    l <- labelled::label_attribute(x@matrices[[.x]])
+    if (is.null(l)) .x else l
+  })
+  stats::setNames(nms, nm = labs)
+})
+
+
+#' Extract or Replace an element of a `ListMatrix`
+#'
+#' @param x A `ListMatrix` object
+#' @param i An index or a name of the element to extract/replace
+#' @name Extract
+NULL
+#' @rdname Extract
+#' @export
+setMethod("[[", signature(x = "ListMatrix"), function(x, i, ...) x@matrices[[i]])
+#' @rdname Extract
+#' @export
+setMethod("[[<-", signature(x = "ListMatrix"), function(x, i, ..., value) {
+  x@matrices[[i]] <- value
+  x
+})
+
+
+#' @param x A `ListMatrix` object
+#' @rdname ListMatrix-class
+#' @export
+setMethod("as.list", signature(x = "ListMatrix"), function(x) x@matrices)
+
 #' @rdname ListMatrix-class
 #' @export
 setMethod(
@@ -116,19 +166,6 @@ setMethod("show", signature(object = "ListMatrix"), function(object) {
 #' @rdname ListMatrix-class
 #' @export
 setMethod("print", signature(x = "ListMatrix"), function(x) show(x))
-
-#' @rdname ListMatrix-class
-#' @export
-setMethod("names", signature(x = "ListMatrix"), function(x) names(x@matrices))
-#' @rdname ListMatrix-class
-#' @export
-setMethod("[[", signature(x = "ListMatrix", i = "ANY"), function(x, i) x@matrices[[i]])
-#' @rdname ListMatrix-class
-#' @export
-setMethod("[[<-", signature(x = "ListMatrix", i = "ANY"), function(x, i, value) {
-  x@matrices[[i]] <- value
-  x
-})
 
 
 

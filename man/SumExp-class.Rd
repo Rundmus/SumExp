@@ -4,14 +4,14 @@
 \name{SumExp-class}
 \alias{SumExp-class}
 \alias{SumExp}
-\alias{rowData}
-\alias{rowData,SumExp-method}
-\alias{rowData<-}
-\alias{rowData<-,SumExp,data.frame-method}
-\alias{colData}
-\alias{colData,SumExp-method}
-\alias{colData<-}
-\alias{colData<-,SumExp,data.frame-method}
+\alias{row_df}
+\alias{row_df,SumExp-method}
+\alias{row_df<-}
+\alias{row_df<-,SumExp,data.frame-method}
+\alias{col_df}
+\alias{col_df,SumExp-method}
+\alias{col_df<-}
+\alias{col_df<-,SumExp,data.frame-method}
 \alias{metadata}
 \alias{metadata,SumExp-method}
 \alias{metadata<-}
@@ -27,21 +27,21 @@
 \alias{ggplot,SumExp-method}
 \title{An light S4 class for the matrices with additional information for columns and rows}
 \usage{
-rowData(x)
+row_df(x)
 
-\S4method{rowData}{SumExp}(x)
+\S4method{row_df}{SumExp}(x)
 
-rowData(x) <- value
+row_df(x) <- value
 
-\S4method{rowData}{SumExp,data.frame}(x) <- value
+\S4method{row_df}{SumExp,data.frame}(x) <- value
 
-colData(x)
+col_df(x)
 
-\S4method{colData}{SumExp}(x)
+\S4method{col_df}{SumExp}(x)
 
-colData(x) <- value
+col_df(x) <- value
 
-\S4method{colData}{SumExp,data.frame}(x) <- value
+\S4method{col_df}{SumExp,data.frame}(x) <- value
 
 metadata(x)
 
@@ -80,11 +80,12 @@ Methods for `SumExp` objects
 \section{Slots}{
 
 \describe{
-\item{\code{matrices}}{A `ListMatrix` object, a list with the matrices}
+\item{\code{matrices}}{A list with matrices. All matrices must have the same dimensions and
+row/column names.}
 
-\item{\code{colData}}{A data frame with additional information for columns}
+\item{\code{col_df}}{A data frame with additional information for columns}
 
-\item{\code{rowData}}{A data frame with additional information for rows}
+\item{\code{row_df}}{A data frame with additional information for rows}
 
 \item{\code{metadata}}{A `list` with any other additional information}
 }}
