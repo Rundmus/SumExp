@@ -21,11 +21,11 @@ SumExp <- setClass(
 setMethod(
   "initialize", "SumExp",
   function(.Object,
-           matrices = list(),
+           ...,
            col_df = data.frame(),
            row_df = data.frame(),
            metadata = list()) {
-    .Object@matrices <- matrices
+    .Object@.Data <- list(...)
     .Object@col_df <- col_df
     .Object@row_df <- row_df
     .Object@metadata <- metadata
@@ -34,19 +34,20 @@ setMethod(
   }
 )
 
-.valid_SumExp_lst_mat <- function(x) {
-  if (any(is.null(names(x)))) return("Names of @matrices must be defined")
+.valid_SumExp_ListMatrix <- function(x) {
+  if (any(is.null(names(x)))) return("Names of matrices must be defined")
+  if (anyDuplicated(names(x)) != 0) return("Names of matrices must be unique")
   if (ncol(x) != nrow(x@col_df)) {
-    return("Number of columns in @matrices must be equal to number of rows in @col_df")
+    return("Number of columns in matrices must be equal to number of rows of @col_df")
   }
   if (any(colnames(x) != rownames(x@col_df))) {
-    return("Column names in @matrices must be equal to row names in @col_df")
+    return("Column names in matrices must be equal to row names of @col_df")
   }
   if (nrow(x) != nrow(x@row_df)) {
-    return("Number of rows in @matrices must be equal to number of rows in @row_df")
+    return("Number of rows in matrices must be equal to number of rows of @row_df")
   }
   if (any(rownames(x) != rownames(x@row_df))) {
-    return("Row names in @matrices must be equal to row names in @row_df")
+    return("Row names in matrices must be equal to row names of @row_df")
   }
   NULL
 }
@@ -63,7 +64,7 @@ setMethod(
 
 setValidity("SumExp", function(object) {
   er_m <- c(
-    .valid_SumExp_lst_mat(object),
+    .valid_SumExp_ListMatrix(object),
     .valid_SumExp_row_df(object),
     .valid_SumExp_col_df(object)
   )
@@ -150,7 +151,7 @@ setMethod(
   "[", signature(x = "SumExp"),
   function(x, i, j, ..., drop = FALSE) {
     stopifnot("drop must be FALSE" = !drop)
-    data_lst <- lapply(x@matrices, \(.x) {
+    data_lst <- lapply(x, \(.x) {
       .x[i, j, drop = FALSE] |>
         labelled::copy_labels_from(.x)
     })
@@ -159,7 +160,7 @@ setMethod(
     row_df <- x@row_df[i, , drop = FALSE] |>
       labelled::copy_labels_from(x@row_df)
     metadata <- x@metadata
-    new("SumExp", matrices = data_lst, col_df = col_df, row_df = row_df, metadata = metadata)
+    do.call("SumExp", c(data_lst, list(col_df = col_df, row_df = row_df, metadata = metadata)))
   }
 )
 

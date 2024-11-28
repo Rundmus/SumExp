@@ -6,30 +6,30 @@
 #' @export
 ListMatrix <- setClass(
   "ListMatrix",
-  slots = c(matrices = "list")
+  contains = "list"
 )
 
 setMethod(
   "initialize", "ListMatrix",
   function(.Object, ...) {
-    .Object@matrices <- list(...)
+    .Object@.Data <- list(...)
     validObject(.Object)
     return(.Object)
   }
 )
 
 setValidity("ListMatrix", function(object) {
-  for(ii in seq_along(object@matrices)) {
-    mat_ii <- object@matrices[[ii]]
-    if (!is.matrix(mat_ii)) return("All elements of @matrices must be matrices")
-    if (ncol(mat_ii) > 0 & is.null(colnames(mat_ii))) {
+  for(ii in seq_along(object)) {
+    mat_ii <- object[[ii]]
+    if (!is.matrix(mat_ii)) return("Every element must be a matrix")
+    if (ncol(mat_ii) > 0 & is.null(colnames(mat_ii))) {      # Allow matrices with no columns
       return("Column names in all matrices must be defined")
     }
-    if (nrow(mat_ii) > 0 & is.null(rownames(mat_ii))) {
+    if (nrow(mat_ii) > 0 & is.null(rownames(mat_ii))) {      # Allow matrices with no rows
       return("Row names in all matrices must be defined")
     }
     if (ii > 1) {
-      mat_ii_1 <- object@matrices[[ii - 1]]
+      mat_ii_1 <- object[[ii - 1]]
       if (!identical(dim(mat_ii), dim(mat_ii_1))) {
         return("Dimensions of all matrices must be equal")
       }
@@ -46,83 +46,60 @@ setValidity("ListMatrix", function(object) {
 
 # Methods --------------------------------------------------------------------------------
 
-#' Get the names of the matrices in a `ListMatrix`
+setGeneric("name_labs", function(x) standardGeneric("name_labs"))
+#' Get the names of the matrices in a `ListMatrix` with label attributes
 #'
 #' @param x A `ListMatrix` object
-#' @return `names` returns a character vector with the names of the matrices.
-#'    `name_labs` returns label attributes are attached as the names of the returned names, if
-#'    the matrices have label attributes by `labelled`,
-#' @name names
-#' @export
-setMethod("names", signature(x = "ListMatrix"), function(x) names(x@matrices))
-setGeneric("name_labs", function(x) standardGeneric("name_labs"))
-#' @rdname names
+#' @return A character vector with the names of the matrices. If the matrices have label
+#'   attributes, the labels are returned as the names of the returned character vector.
+#'
 #' @export
 setMethod("name_labs", signature(x = "ListMatrix"), function(x) {
-  nms <- names(x@matrices)
+  nms <- names(x)
   labs <- sapply(nms, \(.x) {
-    l <- labelled::label_attribute(x@matrices[[.x]])
+    l <- labelled::label_attribute(x[[.x]])
     if (is.null(l)) .x else l
   })
   stats::setNames(nms, nm = labs)
 })
 
 
-#' Extract or Replace an element of a `ListMatrix`
-#'
 #' @param x A `ListMatrix` object
-#' @param i An index or a name of the element to extract/replace
-#' @name Extract
-NULL
-#' @rdname Extract
+#' @rdname ListMatrix-class
 #' @export
-setMethod("[[", signature(x = "ListMatrix"), function(x, i, ...) x@matrices[[i]])
-#' @rdname Extract
-#' @export
-setMethod("[[<-", signature(x = "ListMatrix"), function(x, i, ..., value) {
-  x@matrices[[i]] <- value
-  x
+setMethod("as.list", signature(x = "ListMatrix"), function(x) {
+  stats::setNames(x@.Data, nm = names(x))
 })
 
-
-#' @param x A `ListMatrix` object
 #' @rdname ListMatrix-class
 #' @export
-setMethod("as.list", signature(x = "ListMatrix"), function(x) x@matrices)
-
-#' @rdname ListMatrix-class
-#' @export
-setMethod(
-  "dim",
-  signature(x = "ListMatrix"),
-  function(x) {
-    if (length(x@matrices) == 0) return(c(0, 0))
-    dim(x@matrices[[1]])
-  }
-)
+setMethod("dim", signature(x = "ListMatrix"), function(x) {
+  if (length(x) == 0) return(c(0, 0))
+  dim(x[[1]])
+})
 #' @rdname ListMatrix-class
 setGeneric("nrow", function(x) standardGeneric("nrow"))
 #' @rdname ListMatrix-class
 #' @export
-setMethod("nrow", signature(x = "ListMatrix"), function(x) dim(x)[1L])
+setMethod("nrow", signature(x = "ListMatrix"), function(x) dim(x)[1])
 #' @rdname ListMatrix-class
 setGeneric("ncol", function(x) standardGeneric("ncol"))
 #' @rdname ListMatrix-class
 #' @export
-setMethod("ncol", signature(x = "ListMatrix"), function(x) dim(x)[2L])
+setMethod("ncol", signature(x = "ListMatrix"), function(x) dim(x)[2])
 
 # setGeneric("dimnames", function(x) standardGeneric("dimnames"))    # Primitive
 #' @rdname ListMatrix-class
 #' @export
 setMethod("dimnames", signature(x = "ListMatrix"), function(x) {
-  if (length(x@matrices) == 0) return(list(NULL, NULL))
-  dimnames(x@matrices[[1]])
+  if (length(x) == 0) return(list(NULL, NULL))
+  dimnames(x[[1]])
 })
 #' @rdname ListMatrix-class
 #' @export
 setMethod("dimnames<-", signature(x = "ListMatrix"), function(x, value) {
-  for(ii in seq_along(x@matrices)) {
-    dimnames(x@matrices[[ii]]) <- value
+  for(ii in seq_along(x)) {
+    dimnames(x[[ii]]) <- value
   }
   x
 })
@@ -134,8 +111,8 @@ setGeneric("colnames<-", function(x, value) standardGeneric("colnames<-"))
 #' @rdname ListMatrix-class
 #' @export
 setMethod("colnames<-", signature(x = "ListMatrix"), function(x, value) {
-  for(ii in seq_along(x@matrices)) {
-    colnames(x@matrices[[ii]]) <- value
+  for(ii in seq_along(x)) {
+    colnames(x[[ii]]) <- value
   }
   x
 })
@@ -147,8 +124,8 @@ setGeneric("rownames<-", function(x, value) standardGeneric("rownames<-"))
 #' @rdname ListMatrix-class
 #' @export
 setMethod("rownames<-", signature(x = "ListMatrix"), function(x, value) {
-  for(ii in seq_along(x@matrices)) {
-    rownames(x@matrices[[ii]]) <- value
+  for(ii in seq_along(x)) {
+    rownames(x[[ii]]) <- value
   }
   x
 })
@@ -156,11 +133,11 @@ setMethod("rownames<-", signature(x = "ListMatrix"), function(x, value) {
 #' @rdname ListMatrix-class
 #' @export
 setMethod("show", signature(object = "ListMatrix"), function(object) {
-  cat("ListMatrix with", length(object@matrices), "matrices\n")
-  for(ii in seq_along(object@matrices)) {
-    d <- dim(object@matrices[[ii]])
-    cat("\nMatrix", ii, ":", d, "\n")
-    print(object@matrices[[ii]][1:min(d[1L], 5), 1:min(d[2L], 5)])
+  d <- dim(object)
+  cat("ListMatrix with", length(object), "matrices with dimension of", d)
+  for(ii in seq_along(object)) {
+    cat("\nMatrix", ii, ":\n")
+    print(object[[ii]][1:min(d[1L], 5), 1:min(d[2L], 5)])
   }
 })
 #' @rdname ListMatrix-class

@@ -20,7 +20,7 @@
 \alias{assay,SumExp-method}
 \alias{assay<-}
 \alias{assay<-,SumExp,ANY,matrix-method}
-\alias{[,SumExp-method}
+\alias{[,SumExp,ANY,ANY,ANY-method}
 \title{An light S4 class for the matrices with additional information for columns and rows}
 \usage{
 row_df(x)
@@ -55,7 +55,7 @@ assay(x, i, ...) <- value
 
 \S4method{assay}{SumExp,ANY,matrix}(x, i, ...) <- value
 
-\S4method{[}{SumExp}(x, i, j, ..., drop = FALSE)
+\S4method{[}{SumExp,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }
 \arguments{
 \item{x}{A `SumExp` object}

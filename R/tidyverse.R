@@ -13,16 +13,14 @@ setMethod(
     col_tbl <- tibble::as_tibble(x@col_df, rownames = ".col_id")
     row_tbl <- tibble::as_tibble(x@row_df, rownames = ".row_id")
 
-    stopifnot("Names of @matrices must be unique" = anyDuplicated(names(x@matrices)) == 0)
-    mx <- lapply(names(x@matrices), \(ii) {
-      .x <- x@matrices[[ii]]
-      out <- tibble::as_tibble(.x, rownames = ".row_id") |>
+    mx <- lapply(names(x), \(ii) {
+      out <- tibble::as_tibble(x[[ii]], rownames = ".row_id") |>
         tidyr::pivot_longer(cols = -c(.row_id), names_to = ".col_id", values_to = ii)
     })
     mx <- purrr::reduce(mx, dplyr::full_join, by = c(".row_id", ".col_id"))
     # Copy the label attributes
-    for(ii in names(mx)[names(mx) %in% names(x@matrices)]) {
-      labelled::label_attribute(mx[[ii]]) <- labelled::label_attribute(x@matrices[[ii]])
+    for(ii in names(mx)[names(mx) %in% names(x)]) {
+      labelled::label_attribute(mx[[ii]]) <- labelled::label_attribute(x[[ii]])
     }
 
     mx |>
