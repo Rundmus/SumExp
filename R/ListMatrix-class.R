@@ -137,7 +137,7 @@ setMethod("show", signature(object = "ListMatrix"), function(object) {
   cat("ListMatrix with", length(object), "matrices with dimension of", d)
   for(ii in seq_along(object)) {
     cat("\nMatrix", ii, ":\n")
-    print(object[[ii]][1:min(d[1L], 5), 1:min(d[2L], 5)])
+    print(object[[ii]][0:min(d[1L], 5), 0:min(d[2L], 5)])   # Maximum 5 rows and columns
   }
 })
 #' @rdname ListMatrix-class

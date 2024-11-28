@@ -145,11 +145,20 @@ setMethod("assay<-", signature(x = "SumExp", value = "matrix"), function(x, i, .
 
 # Subset ---------------------------------------------------------------------------------
 
-#' @rdname SumExp-class
+#' Extract elements from a `SumExp` object
+#'
+#' @param x A `SumExp` object
+#' @param i,j Indices specifying elements to extract. The indices can be numeric, character or
+#'   logical vectors. The expression `i` is evaluated in the context of `x@row_df` and `j` in
+#'   the context of `x@col_df`.
+#'
+#' @name Extract
 #' @export
 setMethod(
   "[", signature(x = "SumExp"),
   function(x, i, j, ..., drop = FALSE) {
+    i <- if (missing(i)) TRUE else eval(substitute(i), x@row_df, parent.frame())
+    j <- if (missing(j)) TRUE else eval(substitute(j), x@col_df, parent.frame())
     stopifnot("drop must be FALSE" = !drop)
     data_lst <- lapply(x, \(.x) {
       .x[i, j, drop = FALSE] |>
