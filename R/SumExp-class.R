@@ -126,22 +126,22 @@ setMethod("metadata<-", signature(x = "SumExp", value = "list"), function(x, val
   x
 })
 
-#' @rdname SumExp-class
-#' @export
-setGeneric("assay", function(x, i, ...) standardGeneric("assay"))
-#' @rdname SumExp-class
-#' @export
-setMethod("assay", signature(x = "SumExp"), function(x, i, ...) x[[i]])
-#' @rdname SumExp-class
-#' @export
-setGeneric("assay<-", function(x, i, ..., value) standardGeneric("assay<-"))
-#' @rdname SumExp-class
-#' @export
-setMethod("assay<-", signature(x = "SumExp", value = "matrix"), function(x, i, ..., value) {
-  stopifnot("`i` must have a single value" = length(i) == 1)
-  x[[i]] <- value
-  x
-})
+# #' @rdname SumExp-class
+# #' @export
+# setGeneric("assay", function(x, i, ...) standardGeneric("assay"))
+# #' @rdname SumExp-class
+# #' @export
+# setMethod("assay", signature(x = "SumExp"), function(x, i, ...) x[[i]])
+# #' @rdname SumExp-class
+# #' @export
+# setGeneric("assay<-", function(x, i, ..., value) standardGeneric("assay<-"))
+# #' @rdname SumExp-class
+# #' @export
+# setMethod("assay<-", signature(x = "SumExp", value = "matrix"), function(x, i, ..., value) {
+#   stopifnot("`i` must have a single value" = length(i) == 1)
+#   x[[i]] <- value
+#   x
+# })
 
 # Subset ---------------------------------------------------------------------------------
 
@@ -149,17 +149,27 @@ setMethod("assay<-", signature(x = "SumExp", value = "matrix"), function(x, i, .
 #'
 #' @param x A `SumExp` object
 #' @param i,j Indices specifying elements to extract. The indices can be numeric, character or
-#'   logical vectors. The expression `i` is evaluated in the context of `x@row_df` and `j` in
-#'   the context of `x@col_df`.
+#'   logical vectors. If given as a quoted expression (ie. `call` or `quosure` object), it will
+#'   be evaluated in the context of the `SumExp` object. The `i` is evaluated in the context of
+#'   `row_df(x)` and `j` in the context of `col_df(x)`.
 #'
 #' @name Extract
 #' @export
 setMethod(
   "[", signature(x = "SumExp"),
-  function(x, i, j, ..., drop = FALSE) {
-    i <- if (missing(i)) TRUE else eval(substitute(i), x@row_df, parent.frame())
-    j <- if (missing(j)) TRUE else eval(substitute(j), x@col_df, parent.frame())
-    stopifnot("drop must be FALSE" = !drop)
+  function(x, i, j, ...) {
+    .get_ij <- function(ij, df) {
+      if (missing(ij)) {
+        rep_len(TRUE, nrow(df))
+      } else if (is.call(ij) | rlang::is_quosure(ij)) {    # Quoted expression
+        eval(ij, df, parent.frame())
+      } else {
+        ij
+      }
+    }
+    i <- .get_ij(i, x@row_df)
+    j <- .get_ij(j, x@col_df)
+
     data_lst <- lapply(x, \(.x) {
       .x[i, j, drop = FALSE] |>
         labelled::copy_labels_from(.x)
@@ -169,8 +179,9 @@ setMethod(
     row_df <- x@row_df[i, , drop = FALSE] |>
       labelled::copy_labels_from(x@row_df)
     metadata <- x@metadata
-    do.call("SumExp", c(data_lst, list(col_df = col_df, row_df = row_df, metadata = metadata)))
+    do.call("new", c(
+      data_lst,
+      list(Class = "SumExp", col_df = col_df, row_df = row_df, metadata = metadata)
+    ))
   }
 )
-
-

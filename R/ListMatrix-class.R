@@ -71,6 +71,12 @@ setMethod("as.list", signature(x = "ListMatrix"), function(x) {
   stats::setNames(x@.Data, nm = names(x))
 })
 
+setMethod("[[<-" , signature(x = "ListMatrix"), function(x, i, value) {
+  x <- callNextMethod()
+  validObject(x)
+  x
+})
+
 #' @rdname ListMatrix-class
 #' @export
 setMethod("dim", signature(x = "ListMatrix"), function(x) {
@@ -136,7 +142,9 @@ setMethod("show", signature(object = "ListMatrix"), function(object) {
   d <- dim(object)
   cat("ListMatrix with", length(object), "matrices with dimension of", d)
   for(ii in seq_along(object)) {
-    cat("\nMatrix", ii, ":\n")
+    nm <- names(object)[ii]
+    if (!is.null(nm)) nm <- paste0("`", nm, "`")
+    cat("\nMatrix", ii, nm, ":\n")
     print(object[[ii]][0:min(d[1L], 5), 0:min(d[2L], 5)])   # Maximum 5 rows and columns
   }
 })

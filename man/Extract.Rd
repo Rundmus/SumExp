@@ -4,14 +4,15 @@
 \alias{Extract}
 \title{Extract elements from a `SumExp` object}
 \usage{
-\S4method{[}{SumExp}(x, i, j, ..., drop = FALSE)
+\S4method{[}{SumExp}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
 \item{x}{A `SumExp` object}
 
 \item{i, j}{Indices specifying elements to extract. The indices can be numeric, character or
-logical vectors. The expression `i` is evaluated in the context of `x@row_df` and `j` in
-the context of `x@col_df`.}
+logical vectors. If given as a quoted expression (ie. `call` or `quosure` object), it will
+be evaluated in the context of the `SumExp` object. The `i` is evaluated in the context of
+`row_df(x)` and `j` in the context of `col_df(x)`.}
 }
 \description{
 Extract elements from a `SumExp` object

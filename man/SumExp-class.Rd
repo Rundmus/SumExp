@@ -16,10 +16,6 @@
 \alias{metadata,SumExp-method}
 \alias{metadata<-}
 \alias{metadata<-,SumExp,list-method}
-\alias{assay}
-\alias{assay,SumExp-method}
-\alias{assay<-}
-\alias{assay<-,SumExp,ANY,matrix-method}
 \title{An light S4 class for the matrices with additional information for columns and rows}
 \usage{
 row_df(x)
@@ -45,14 +41,6 @@ metadata(x)
 metadata(x) <- value
 
 \S4method{metadata}{SumExp,list}(x) <- value
-
-assay(x, i, ...)
-
-\S4method{assay}{SumExp}(x, i, ...)
-
-assay(x, i, ...) <- value
-
-\S4method{assay}{SumExp,ANY,matrix}(x, i, ...) <- value
 }
 \arguments{
 \item{x}{A `SumExp` object}
