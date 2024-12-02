@@ -7,10 +7,25 @@ Maintainer: Mun-Gwan Hong <mungwan.hong@nbis.se>
 Description: This package has functions to handle a class that has a structure
   similar to SummarizedExperiment in Bioconductor. Unlike SummarizedExperiment,
   this package cope with tibble and labelled classes. 
-License: GPL-3
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Collate: 
+    'list-method.R'
+    'ListMatrix-class.R'
+    'SumExp-class.R'
+    'Extract.R'
+    'tidyverse.R'
+Imports: 
+    dplyr,
+    ggplot2,
+    labelled,
+    methods,
+    rlang,
+    tibble,
+    tidyr

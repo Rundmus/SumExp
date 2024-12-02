@@ -43,23 +43,42 @@ metadata(x) <- value
 \S4method{metadata}{SumExp,list}(x) <- value
 }
 \arguments{
-\item{x}{A `SumExp` object}
+\item{x}{A \code{\link{SumExp}} object}
+
+\item{value}{A data frame for \verb{row_df<-} and \verb{col_df<-} or a list for \verb{metadata<-}}
 }
 \description{
 An light S4 class for the matrices with additional information for columns and rows
 
-Methods for `SumExp` objects
+Accessors for \code{\link{SumExp}} objects
 }
 \section{Slots}{
 
 \describe{
-\item{\code{matrices}}{A list with matrices. All matrices must have the same dimensions and
-row/column names.}
+\item{\code{.Data}}{A list with matrices. All matrices must have the same dimensions and row/column
+names.}
 
 \item{\code{col_df}}{A data frame with additional information for columns}
 
 \item{\code{row_df}}{A data frame with additional information for rows}
 
-\item{\code{metadata}}{A `list` with any other additional information}
+\item{\code{metadata}}{A \code{\link{list}} with any other additional information}
 }}
 
+\examples{
+nms <- list(LETTERS[1:4], letters[1:5])
+m1 <- matrix(sample(20), nrow = 4, dimnames = nms)
+m2 <- matrix(sample(LETTERS, 20), nrow = 4, dimnames = nms)
+df_c <- data.frame(
+  x = c("alpha", "beta", "gamma", "delta", "epsilon"),
+  type = gl(2, 3, 5, c("", "fruit")),
+  row.names = nms[[2]]
+)
+df_r <- data.frame(
+  y = rnorm(4),
+  grp = rep(c("White", "Black"), each = 2),
+  row.names = nms[[1]]
+)
+se <- SumExp(a = m1, b = m2, row_df = df_r, col_df = df_c)
+
+}

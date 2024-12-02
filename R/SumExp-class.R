@@ -1,11 +1,33 @@
+#' @include ListMatrix-class.R
+#' @include list-method.R
+NULL
+
 #' An light S4 class for the matrices with additional information for columns and rows
 #'
-#' @slot matrices A list with matrices. All matrices must have the same dimensions and
-#'   row/column names.
+#' @slot .Data A list with matrices. All matrices must have the same dimensions and row/column
+#'   names.
 #' @slot col_df A data frame with additional information for columns
 #' @slot row_df A data frame with additional information for rows
-#' @slot metadata A `list` with any other additional information
+#' @slot metadata A [`list`] with any other additional information
 #'
+#' @examples
+#' nms <- list(LETTERS[1:4], letters[1:5])
+#' m1 <- matrix(sample(20), nrow = 4, dimnames = nms)
+#' m2 <- matrix(sample(LETTERS, 20), nrow = 4, dimnames = nms)
+#' df_c <- data.frame(
+#'   x = c("alpha", "beta", "gamma", "delta", "epsilon"),
+#'   type = gl(2, 3, 5, c("", "fruit")),
+#'   row.names = nms[[2]]
+#' )
+#' df_r <- data.frame(
+#'   y = rnorm(4),
+#'   grp = rep(c("White", "Black"), each = 2),
+#'   row.names = nms[[1]]
+#' )
+#' se <- SumExp(a = m1, b = m2, row_df = df_r, col_df = df_c)
+#'
+#' @importFrom methods setClass setMethod setValidity setGeneric callNextMethod validObject
+#'   signature new show
 #' @exportClass SumExp
 #' @export
 SumExp <- setClass(
@@ -35,8 +57,12 @@ setMethod(
 )
 
 .valid_SumExp_ListMatrix <- function(x) {
-  if (any(is.null(names(x)))) return("Names of matrices must be defined")
-  if (anyDuplicated(names(x)) != 0) return("Names of matrices must be unique")
+  if (any(is.null(names(x)))) {
+    return("Names of matrices must be defined")
+  }
+  if (anyDuplicated(names(x)) != 0) {
+    return("Names of matrices must be unique")
+  }
   if (ncol(x) != nrow(x@col_df)) {
     return("Number of columns in matrices must be equal to number of rows of @col_df")
   }
@@ -75,9 +101,10 @@ setValidity("SumExp", function(object) {
 # Methods --------------------------------------------------------------------------------
 
 
-#' Methods for `SumExp` objects
+#' Accessors for [`SumExp`] objects
 #'
-#' @param x A `SumExp` object
+#' @param x A [`SumExp`] object
+#' @param value A data frame for `row_df<-` and `col_df<-` or a list for `metadata<-`
 #' @rdname SumExp-class
 #' @export
 setGeneric("row_df", function(x) standardGeneric("row_df"))
@@ -143,45 +170,3 @@ setMethod("metadata<-", signature(x = "SumExp", value = "list"), function(x, val
 #   x
 # })
 
-# Subset ---------------------------------------------------------------------------------
-
-#' Extract elements from a `SumExp` object
-#'
-#' @param x A `SumExp` object
-#' @param i,j Indices specifying elements to extract. The indices can be numeric, character or
-#'   logical vectors. If given as a quoted expression (ie. `call` or `quosure` object), it will
-#'   be evaluated in the context of the `SumExp` object. The `i` is evaluated in the context of
-#'   `row_df(x)` and `j` in the context of `col_df(x)`.
-#'
-#' @name Extract
-#' @export
-setMethod(
-  "[", signature(x = "SumExp"),
-  function(x, i, j, ...) {
-    .get_ij <- function(ij, df) {
-      if (missing(ij)) {
-        rep_len(TRUE, nrow(df))
-      } else if (is.call(ij) | rlang::is_quosure(ij)) {    # Quoted expression
-        eval(ij, df, parent.frame())
-      } else {
-        ij
-      }
-    }
-    i <- .get_ij(i, x@row_df)
-    j <- .get_ij(j, x@col_df)
-
-    data_lst <- lapply(x, \(.x) {
-      .x[i, j, drop = FALSE] |>
-        labelled::copy_labels_from(.x)
-    })
-    col_df <- x@col_df[j, , drop = FALSE] |>
-      labelled::copy_labels_from(x@col_df)
-    row_df <- x@row_df[i, , drop = FALSE] |>
-      labelled::copy_labels_from(x@row_df)
-    metadata <- x@metadata
-    do.call("new", c(
-      data_lst,
-      list(Class = "SumExp", col_df = col_df, row_df = row_df, metadata = metadata)
-    ))
-  }
-)

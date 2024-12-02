@@ -5,10 +5,9 @@
 \alias{ListMatrix-class}
 \alias{ListMatrix}
 \alias{as.list,ListMatrix-method}
+\alias{[[<-,ListMatrix-method}
 \alias{dim,ListMatrix-method}
-\alias{nrow}
 \alias{nrow,ListMatrix-method}
-\alias{ncol}
 \alias{ncol,ListMatrix-method}
 \alias{dimnames,ListMatrix-method}
 \alias{dimnames<-,ListMatrix-method}
@@ -22,13 +21,11 @@
 \usage{
 \S4method{as.list}{ListMatrix}(x)
 
+\S4method{[[}{ListMatrix}(x, i) <- value
+
 \S4method{dim}{ListMatrix}(x)
 
-nrow(x)
-
 \S4method{nrow}{ListMatrix}(x)
-
-ncol(x)
 
 \S4method{ncol}{ListMatrix}(x)
 
@@ -49,15 +46,41 @@ ncol(x)
 \S4method{print}{ListMatrix}(x)
 }
 \arguments{
-\item{x}{A `ListMatrix` object}
+\item{x, object}{A \code{\link{ListMatrix}} object}
+
+\item{i}{An integer or a character}
+
+\item{value}{A matrix for \verb{[[<-};
+A character vector for \verb{colnames<-} and \verb{rownames<-};
+A list of row and column names for \verb{dimnames<-}}
 }
 \description{
-A class for storing a list of matrices
+This class inherits \code{\link[base:list]{base::list}} class and is used to store a list of matrices. This class
+makes sure that all matrices are named and have the same dimensions and row/column names.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{matrices}}{A list with matrices. All matrices must have the same dimensions and
-row/column names.}
+\item{\code{.Data}}{A list with matrices. All matrices must have the same dimensions and row/column
+names.}
 }}
 
+\examples{
+nms <- list(LETTERS[1:4], letters[1:5])
+m1 <- matrix(sample(20), nrow = 4, dimnames = nms)
+m2 <- matrix(sample(LETTERS, 20), nrow = 4, dimnames = nms)
+l <- ListMatrix('mat1' = m1, 'mat2' = m2)
+
+# Get as list
+x <- as.list(l)
+str(x)
+# Update a matrix in a ListMatrix object
+m3 <- m2
+m3[2, ] <- c(letters[5:9])
+l[[2]] <- m3
+l
+# Get the dimensions of a ListMatrix object
+dim(l)
+nrow(l)
+ncol(l)
+}
