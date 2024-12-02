@@ -9,3 +9,6 @@
 .Rbuildignore
 *.Rproj
 
+
+.Rprofile
+
