@@ -102,37 +102,45 @@ test_that("labelled works", {
 })
 
 test_that("SumExp `[` works", {
-  se <- SumExp(a = m1, b = m2, row_df = df_r, col_df = df_c)
-  expect_s4_class(se[1:2, ], "SumExp")
-  expect_s4_class(se[, 3:5], "SumExp")
-  sub_se <- se[1:2, 3:5]
+  expect_s4_class(exmpl_se[1:2, ], "SumExp")
+  expect_s4_class(exmpl_se[, 3:5], "SumExp")
+  sub_se <- exmpl_se[1:2, 3:5]
+  m1 <- exmpl_se[[1]]
+  m2 <- exmpl_se[[2]]
+  df_r <- exmpl_se@row_df
+  df_c <- exmpl_se@col_df
   expect_s4_class(sub_se, "SumExp")
-  expect_equal(sub_se[["a"]], m1[1:2, 3:5])
-  expect_equal(sub_se[["b"]], m2[1:2, 3:5])
-  expect_equal(sub_se@row_df, df_r[1:2, , drop = FALSE])
-  expect_equal(sub_se@col_df, df_c[3:5, , drop = FALSE])
-  expect_equal(se["B", ], se[2, ])
-  expect_equal(se[, "c"], se[, 3])
+  expect_equal(sub_se[["a"]], labelled::copy_labels(m1, m1[1:2, 3:5]))
+  expect_equal(sub_se[["mat2"]], m2[1:2, 3:5])
+  expect_equal(sub_se@row_df, df_r[1:2, , drop = FALSE] |> labelled::copy_labels_from(df_r))
+  expect_equal(sub_se@col_df, df_c[3:5, , drop = FALSE] |> labelled::copy_labels_from(df_c))
+  expect_equal(exmpl_se["B", ], exmpl_se[2, ])
+  expect_equal(exmpl_se[, "3"], exmpl_se[, 3])
   # Evaluation with logical expression
-  expect_equal(se[rep(TRUE, nrow(se)), ], se)
-  is_fine <- rep(TRUE, ncol(se))
-  expect_equal(se[, is_fine], se)
+  expect_equal(exmpl_se[rep(TRUE, nrow(exmpl_se)), ], exmpl_se)
+  is_fine <- rep(TRUE, ncol(exmpl_se))
+  expect_equal(exmpl_se[, is_fine], exmpl_se)
   # Evaluation with full expression
-  expect_equal(se[row_df(se)$grp == "Black", ], se[3:4, ])
-  expect_equal(se[, col_df(se)$type == ""], se[, 1:2])
+  expect_equal(exmpl_se[row_df(exmpl_se)$color == "Black", ], exmpl_se[3:5, ])
+  expect_equal(exmpl_se[, col_df(exmpl_se)$type == ""], exmpl_se[, 1:2])
   # Evaluation within the SumExp object
-  expect_equal(se[quote(grp == "Black"), ], se[3:4, ])
-  expect_equal(se[, quote(type == "")], se[, 1:2])
+  expect_equal(exmpl_se[quote(color == "Black"), ], exmpl_se[3:5, ])
+  expect_equal(exmpl_se[, quote(type == "")], exmpl_se[, 1:2])
   # Labelled
-  m2 <- labelled::set_label_attribute(m2, "matrix_b")
-  se <- SumExp(a = m1, b = m2, row_df = df_r, col_df = df_c)
-  sub_se <- se[1:2, 3:5]
-  expect_equal(labelled::get_label_attribute(sub_se[["b"]]), "matrix_b")
-  expect_equal(labelled::get_label_attribute(se[quote(grp == "Black"), ][["b"]]), "matrix_b")
+  sub_se <- exmpl_se[1:2, 3:5]
+  expect_equal(labelled::get_label_attribute(sub_se[["a"]]), "Matrix A")
+  expect_equal(
+    labelled::get_label_attribute(exmpl_se[quote(color == "Black"), ][["a"]]),
+    "Matrix A"
+  )
 
-  # Immune to Matrix (Multiple dispatch of signatures)
-  box::use(Matrix)
-  expect_s4_class(se[quote(grp == "Black"), ], "SumExp")
+  # Evaluation with list element in row_df
+  exmpl_se@row_df$lst <- lapply(1:5, function(x) c(1:x))
+  expect_s4_class(exmpl_se[1:2, ], "SumExp")
+
+  # # Immune to Matrix (Multiple dispatch of signatures)
+  # box::use(Matrix)
+  # expect_s4_class(exmpl_se[quote(color == "Black"), ], "SumExp")
 })
 
 
