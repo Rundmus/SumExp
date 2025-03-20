@@ -1,7 +1,7 @@
 Package: SumExp
 Type: Package
 Title: A light package similar to SummarizedExperiment
-Version: 0.1.0
+Version: 0.1.1
 Author: Mun-Gwan Hong
 Maintainer: Mun-Gwan Hong <mungwan.hong@nbis.se>
 Description: This package has functions to handle a class that has a structure
@@ -20,6 +20,8 @@ Collate:
     'ListMatrix-class.R'
     'SumExp-class.R'
     'Extract.R'
+    'data.R'
+    'labelled.R'
     'tidyverse.R'
 Imports: 
     dplyr,
@@ -29,3 +31,5 @@ Imports:
     rlang,
     tibble,
     tidyr
+Depends: 
+    R (>= 2.10)

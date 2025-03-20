@@ -32,10 +32,9 @@ setMethod(
       .x[i, j, drop = FALSE] |>
         labelled::copy_labels_from(.x)
     })
-    col_df <- x@col_df[j, , drop = FALSE] |>
-      labelled::copy_labels_from(x@col_df)
-    row_df <- x@row_df[i, , drop = FALSE] |>
-      labelled::copy_labels_from(x@row_df)
+
+    col_df <- subset_copy_labels.data.frame(x@col_df, j)
+    row_df <- subset_copy_labels.data.frame(x@row_df, i)
     metadata <- x@metadata
     do.call("new", c(
       data_lst,
