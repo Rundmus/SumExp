@@ -1,7 +1,7 @@
 Package: SumExp
 Type: Package
 Title: A light package similar to SummarizedExperiment
-Version: 0.1.1
+Version: 0.1.2
 Author: Mun-Gwan Hong
 Maintainer: Mun-Gwan Hong <mungwan.hong@nbis.se>
 Description: This package has functions to handle a class that has a structure

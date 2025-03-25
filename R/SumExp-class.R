@@ -153,6 +153,47 @@ setMethod("metadata<-", signature(x = "SumExp", value = "list"), function(x, val
   x
 })
 
+
+#' Print a data frame like printing a tibble
+#'
+#' @param x A data frame
+#' @param ...,n Additional arguments passed to [tibble::print.tbl()]
+#'
+#' @returns The input data frame
+#' @examples
+#' .print_data_frame_like_tibble(iris)
+.print_data_frame_like_tibble <- function(x, ..., n = 5) {
+  stopifnot(is.data.frame(x))
+  # Add row names
+  max5rownm <- rownames(x)[0:min(nrow(x), n)]
+  rownm <- paste0("`", max5rownm, "`", collapse = ", ")
+  if (nrow(x) > n) rownm <- paste0(rownm, "...")
+  prefix <- "# - Row names:"
+  max_width <- getOption("width") - nchar(prefix) - 4    # 4 for `...` and one extra
+  rownm <- paste(prefix, stringr::str_trunc(rownm, max_width))
+
+  txt <- utils::capture.output(print(tibble::as_tibble(x), ..., n = n))
+  txt[1] <- sub("tibble", "data.frame", txt[1])
+  txt <- c(txt[1], rownm, txt[2:length(txt)])
+  cat(txt, sep = "\n")
+  invisible(x)
+}
+
+#' @rdname SumExp-class
+#' @export
+setMethod("show", signature(object = "SumExp"), function(object) {
+
+  selectMethod("show", "ListMatrix")(object)
+  cat("\n@row_df:\n")
+  .print_data_frame_like_tibble(object@row_df)
+  cat("\n@col_df:\n")
+  .print_data_frame_like_tibble(object@col_df)
+})
+#' @rdname SumExp-class
+#' @export
+setMethod("print", signature(x = "SumExp"), function(x) show(x))
+
+
 # #' @rdname SumExp-class
 # #' @export
 # setGeneric("assay", function(x, i, ...) standardGeneric("assay"))
@@ -169,4 +210,5 @@ setMethod("metadata<-", signature(x = "SumExp", value = "list"), function(x, val
 #   x[[i]] <- value
 #   x
 # })
+
 

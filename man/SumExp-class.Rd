@@ -16,6 +16,8 @@
 \alias{metadata,SumExp-method}
 \alias{metadata<-}
 \alias{metadata<-,SumExp,list-method}
+\alias{show,SumExp-method}
+\alias{print,SumExp-method}
 \title{An light S4 class for the matrices with additional information for columns and rows}
 \usage{
 row_df(x)
@@ -41,6 +43,10 @@ metadata(x)
 metadata(x) <- value
 
 \S4method{metadata}{SumExp,list}(x) <- value
+
+\S4method{show}{SumExp}(object)
+
+\S4method{print}{SumExp}(x)
 }
 \arguments{
 \item{x}{A \code{\link{SumExp}} object}
