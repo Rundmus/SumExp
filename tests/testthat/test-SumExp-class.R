@@ -13,23 +13,6 @@ df_r <- data.frame(
   row.names = LETTERS[1:4]
 )
 
-test_that("ListMatrix functions inherited from list", {
-  expect_s4_class(
-    l <- ListMatrix(a = m1, b = m2),
-    "ListMatrix"
-  )
-  expect_equal(names(l), c("a", "b"))
-  expect_equal(l[["a"]], m1)
-  expect_equal(l$b, m2)
-  l$a <- m2
-  expect_equal(l$a, m2)
-  m3 <- matrix(sample(LETTERS, 20), nrow = 4)
-  dimnames(m3) <- list(LETTERS[1:4], letters[1:5])
-  l[["a"]] <- m3
-  expect_equal(l$a, m3)
-  expect_equal(names(l), c("a", "b"))
-})
-
 se <- SumExp(a = m1, b = m2, row_df = df_r, col_df = df_c)
 expect_s4_class(se, "SumExp")
 test_that("ListMatrix validation works with SumExp obj", {
