@@ -6,6 +6,8 @@
 #'
 #' @slot .Data A list with matrices. All matrices must have the same dimensions and row/column
 #'   names.
+#' @slot names A character vector with the names of the matrices. This is added because the
+#'   `.Data` doesn't contain the names.
 #'
 #' @param x,object A [`ListMatrix`] object
 #' @param i An integer or a character
@@ -24,21 +26,32 @@
 #' @export
 ListMatrix <- setClass(
   "ListMatrix",
-  contains = "list"
+  contains = "list",
+  slots = c(names = "character")
 )
 
 setMethod(
   "initialize", "ListMatrix",
   function(.Object, ...) {
-    .Object@.Data <- list(...)
-    validObject(as(.Object, "ListMatrix"))    # `as` for callNextMethod in inherited classes
-    return(.Object)
+    dots <- list(...)
+    .Object@.Data <- unname(dots)
+    nm <- names(dots)           # To proceed without names to validation step
+    .Object@names <- if (is.null(nm)) character() else nm
+    validObject(.Object)
+    .Object
   }
 )
 
-setValidity("ListMatrix", function(object) {
-  for(ii in seq_along(object)) {
-    mat_i <- object[[ii]]
+setValidity("ListMatrix", function(obj) {
+  if (!is.list(obj)) return("It is not a list")
+  if (length(obj) == 0) return(TRUE)
+  if (length(obj) != length(obj@names) || any(obj@names == "")) {
+    return("Names of matrices must be defined")
+  }
+  if (anyDuplicated(obj@names) != 0) return("Names of matrices must be unique")
+
+  for(ii in seq_along(obj)) {
+    mat_i <- obj[[ii]]
     if (!is.matrix(mat_i)) return("Every element must be a matrix")
     if (ncol(mat_i) > 0 & is.null(colnames(mat_i))) {      # Allow matrices with no columns
       return("Column names in all matrices must be defined")
@@ -47,7 +60,7 @@ setValidity("ListMatrix", function(object) {
       return("Row names in all matrices must be defined")
     }
     if (ii > 1) {       # Check identity across matrices
-      mat_i1 <- object[[ii - 1]]
+      mat_i1 <- obj[[ii - 1]]
       if (!identical(dim(mat_i), dim(mat_i1))) {
         return("Dimensions of all matrices must be equal")
       }
@@ -66,12 +79,21 @@ setValidity("ListMatrix", function(object) {
 
 #' @rdname ListMatrix-class
 #' @examples
+#' # Get the names
+#' names(l)
+#' @export
+setMethod("names", signature(x = "ListMatrix"), function(x) {
+  x@names
+})
+
+#' @rdname ListMatrix-class
+#' @examples
 #' # Get as list
 #' x <- as.list(l)
 #' str(x)
 #' @export
 setMethod("as.list", signature(x = "ListMatrix"), function(x) {
-  stats::setNames(x@.Data, nm = names(x))
+  stats::setNames(x@.Data, nm = x@names)
 })
 #' @rdname ListMatrix-class
 #' @examples
@@ -164,7 +186,7 @@ setMethod("show", signature(object = "ListMatrix"), function(object) {
   d <- dim(object)
   cat("ListMatrix with", length(object), "matrices with dimension of", d)
   for(ii in seq_along(object)) {
-    nm <- names(object)[ii]
+    nm <- object@names[ii]
     if (!is.null(nm)) nm <- paste0("`", nm, "`")
     cat("\nMatrix", ii, nm, ":\n")
     print(object[[ii]][0:min(d[1L], 5), 0:min(d[2L], 5)])   # Maximum 5 rows and columns

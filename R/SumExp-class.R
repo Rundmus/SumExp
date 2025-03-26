@@ -47,22 +47,14 @@ setMethod(
            col_df = data.frame(),
            row_df = data.frame(),
            metadata = list()) {
-    .Object <- callNextMethod(.Object, ...)
     .Object@col_df <- col_df
     .Object@row_df <- row_df
     .Object@metadata <- metadata
-    validObject(as(.Object, "SumExp"))    # `as` for callNextMethod in inherited classes
-    return(.Object)
+    callNextMethod(.Object, ...)
   }
 )
 
 .valid_SumExp_ListMatrix <- function(x) {
-  if (any(is.null(names(x)))) {
-    return("Names of matrices must be defined")
-  }
-  if (anyDuplicated(names(x)) != 0) {
-    return("Names of matrices must be unique")
-  }
   if (ncol(x) != nrow(x@col_df)) {
     return("Number of columns in matrices must be equal to number of rows of @col_df")
   }
