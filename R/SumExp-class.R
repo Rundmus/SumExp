@@ -4,8 +4,8 @@ NULL
 
 #' An light S4 class for the matrices with additional information for columns and rows
 #'
-#' @slot .Data A list with matrices. All matrices must have the same dimensions and row/column
-#'   names.
+#' @slot .Data A list with matrices, [`ListMatrix`]. All matrices must have the same dimensions
+#'   and row/column names.
 #' @slot col_df A data frame with additional information for columns
 #' @slot row_df A data frame with additional information for rows
 #' @slot metadata A [`list`] with any other additional information
@@ -47,11 +47,11 @@ setMethod(
            col_df = data.frame(),
            row_df = data.frame(),
            metadata = list()) {
-    .Object@.Data <- list(...)
+    .Object <- callNextMethod(.Object, ...)
     .Object@col_df <- col_df
     .Object@row_df <- row_df
     .Object@metadata <- metadata
-    validObject(.Object)
+    validObject(as(.Object, "SumExp"))    # `as` for callNextMethod in inherited classes
     return(.Object)
   }
 )

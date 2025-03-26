@@ -31,7 +31,7 @@ setMethod(
   "initialize", "ListMatrix",
   function(.Object, ...) {
     .Object@.Data <- list(...)
-    validObject(.Object)
+    validObject(as(.Object, "ListMatrix"))    # `as` for callNextMethod in inherited classes
     return(.Object)
   }
 )

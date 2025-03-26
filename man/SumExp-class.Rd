@@ -61,8 +61,8 @@ Accessors for \code{\link{SumExp}} objects
 \section{Slots}{
 
 \describe{
-\item{\code{.Data}}{A list with matrices. All matrices must have the same dimensions and row/column
-names.}
+\item{\code{.Data}}{A list with matrices, \code{\link{ListMatrix}}. All matrices must have the same dimensions
+and row/column names.}
 
 \item{\code{col_df}}{A data frame with additional information for columns}
 
