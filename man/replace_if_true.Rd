@@ -2,19 +2,24 @@
 % Please edit documentation in R/replace.R
 \name{replace_if_true}
 \alias{replace_if_true}
-\alias{replace_if_true,ListMatrix,matrix-method}
+\alias{replace_if_true.ListMatrix}
 \title{Replace elements of a \link{ListMatrix} object with a value where a condition is met.}
 \usage{
-replace_if_true(x, cond_mat, value)
+replace_if_true(x, cond, value, ...)
 
-\S4method{replace_if_true}{ListMatrix,matrix}(x, cond_mat, value)
+\method{replace_if_true}{ListMatrix}(x, cond, value)
 }
 \arguments{
 \item{x}{A \link{ListMatrix} object.}
 
-\item{cond_mat}{A logical matrix. It should have the same dimensions as the \code{x}}
+\item{cond}{A logical matrix. It should have the same dimensions as the \code{x}}
 
-\item{value}{A value to replace the elements of \code{x} with, where \code{cond_mat} is \code{TRUE}.}
+\item{value}{A value to replace the elements of \code{x} with, where \code{cond} is \code{TRUE}.}
+
+\item{...}{Additional arguments. Not used.}
+}
+\value{
+A \link{ListMatrix} object with the elements replaced where \code{cond} is \code{TRUE}.
 }
 \description{
 Replace elements of a \link{ListMatrix} object with a value where a condition is met.
