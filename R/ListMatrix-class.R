@@ -42,16 +42,16 @@ setMethod(
   }
 )
 
-setValidity("ListMatrix", function(obj) {
-  if (!is.list(obj)) return("It is not a list")
-  if (length(obj) == 0) return(TRUE)
-  if (length(obj) != length(obj@names) || any(obj@names == "")) {
+setValidity("ListMatrix", function(object) {
+  if (!is.list(object)) return("It is not a list")
+  if (length(object) == 0) return(TRUE)
+  if (length(object) != length(object@names) || any(object@names == "")) {
     return("Names of matrices must be defined")
   }
-  if (anyDuplicated(obj@names) != 0) return("Names of matrices must be unique")
+  if (anyDuplicated(object@names) != 0) return("Names of matrices must be unique")
 
-  for(ii in seq_along(obj)) {
-    mat_i <- obj[[ii]]
+  for(ii in seq_along(object)) {
+    mat_i <- object[[ii]]
     if (!is.matrix(mat_i)) return("Every element must be a matrix")
     if (ncol(mat_i) > 0 & is.null(colnames(mat_i))) {      # Allow matrices with no columns
       return("Column names in all matrices must be defined")
@@ -60,7 +60,7 @@ setValidity("ListMatrix", function(obj) {
       return("Row names in all matrices must be defined")
     }
     if (ii > 1) {       # Check identity across matrices
-      mat_i1 <- obj[[ii - 1]]
+      mat_i1 <- object[[ii - 1]]
       if (!identical(dim(mat_i), dim(mat_i1))) {
         return("Dimensions of all matrices must be equal")
       }

@@ -136,4 +136,14 @@ test_that("SumExp `[` works", {
   # expect_s4_class(exmpl_se[quote(color == "Black"), ], "SumExp")
 })
 
-
+test_that("SumExp split works", {
+  se_split <- split_columns(exmpl_se, f = col_df(exmpl_se)$type)
+  expect_type(se_split, "list")
+  expect_equal(length(se_split), 3)
+  expect_s4_class(se_split[[1]], "SumExp")
+  expect_s4_class(se_split[[2]], "SumExp")
+  se_split <- split_rows(exmpl_se, f = row_df(exmpl_se)$color)
+  expect_type(se_split, "list")
+  expect_equal(length(se_split), 2)
+  expect_s4_class(se_split[["Black"]], "SumExp")
+})

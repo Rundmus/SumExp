@@ -4,6 +4,7 @@
 \name{ListMatrix-class}
 \alias{ListMatrix-class}
 \alias{ListMatrix}
+\alias{names,ListMatrix-method}
 \alias{as.list,ListMatrix-method}
 \alias{[[<-,ListMatrix-method}
 \alias{dim,ListMatrix-method}
@@ -19,6 +20,8 @@
 \alias{print,ListMatrix-method}
 \title{A class for storing a list of matrices}
 \usage{
+\S4method{names}{ListMatrix}(x)
+
 \S4method{as.list}{ListMatrix}(x)
 
 \S4method{[[}{ListMatrix}(x, i) <- value
@@ -63,6 +66,9 @@ makes sure that all matrices are named and have the same dimensions and row/colu
 \describe{
 \item{\code{.Data}}{A list with matrices. All matrices must have the same dimensions and row/column
 names.}
+
+\item{\code{names}}{A character vector with the names of the matrices. This is added because the
+\code{.Data} doesn't contain the names.}
 }}
 
 \examples{
@@ -71,6 +77,8 @@ m1 <- matrix(sample(20), nrow = 4, dimnames = nms)
 m2 <- matrix(sample(LETTERS, 20), nrow = 4, dimnames = nms)
 l <- ListMatrix('mat1' = m1, 'mat2' = m2)
 
+# Get the names
+names(l)
 # Get as list
 x <- as.list(l)
 str(x)

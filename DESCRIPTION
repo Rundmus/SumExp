@@ -23,6 +23,7 @@ Collate:
     'data.R'
     'labelled.R'
     'replace.R'
+    'split.R'
     'tidyverse.R'
 Imports: 
     dplyr,
