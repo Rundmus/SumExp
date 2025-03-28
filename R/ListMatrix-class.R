@@ -43,16 +43,24 @@ setMethod(
 )
 
 setValidity("ListMatrix", function(object) {
-  if (!is.list(object)) return("It is not a list")
-  if (length(object) == 0) return(TRUE)
+  if (!is.list(object)) {
+    return("It is not a list")
+  }
+  if (length(object) == 0) {
+    return(TRUE)
+  }
   if (length(object) != length(object@names) || any(object@names == "")) {
     return("Names of matrices must be defined")
   }
-  if (anyDuplicated(object@names) != 0) return("Names of matrices must be unique")
+  if (anyDuplicated(object@names) != 0) {
+    return("Names of matrices must be unique")
+  }
 
   for(ii in seq_along(object)) {
     mat_i <- object[[ii]]
-    if (!is.matrix(mat_i)) return("Every element must be a matrix")
+    if (!is.matrix(mat_i)) {
+      return("Every element must be a matrix")
+    }
     if (ncol(mat_i) > 0 & is.null(colnames(mat_i))) {      # Allow matrices with no columns
       return("Column names in all matrices must be defined")
     }
@@ -115,7 +123,9 @@ setMethod("[[<-" , signature(x = "ListMatrix"), function(x, i, value) {
 #' dim(l)
 #' @export
 setMethod("dim", signature(x = "ListMatrix"), function(x) {
-  if (length(x) == 0) return(c(0, 0))
+  if (length(x) == 0) {
+    return(c(0, 0))
+  }
   dim(x[[1]])
 })
 
@@ -138,7 +148,9 @@ setMethod("ncol", signature(x = "ListMatrix"), function(x) dim(x)[2])
 #' @rdname ListMatrix-class
 #' @export
 setMethod("dimnames", signature(x = "ListMatrix"), function(x) {
-  if (length(x) == 0) return(list(NULL, NULL))
+  if (length(x) == 0) {
+    return(list(NULL, NULL))
+  }
   dimnames(x[[1]])
 })
 #' @rdname ListMatrix-class

@@ -4,13 +4,13 @@ NULL
 #' Divide into groups
 #'
 #' @description
-#' Split a data frame like structure, e.g. [`SumExp`] object, into groups based on a factor
+#' Split a matrix-like object, e.g. [`SumExp`], into groups based on a factor
 #' column-/row-wise.
 #'
-#' @param x A data frame list structure, e.g. [`SumExp`] object
+#' @param x A matrix-like object, e.g. [`SumExp`]
 #' @param f A factor vector to split by
 #'
-#' @returns A list of data frame list structures
+#' @returns A list of matrix-like objects
 #' @md
 #' @examples
 #' se <- SumExp::exmpl_se

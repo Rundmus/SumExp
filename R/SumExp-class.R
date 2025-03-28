@@ -71,12 +71,16 @@ setMethod(
 }
 
 .valid_SumExp_col_df <- function(x) {
-  if (!is.data.frame(x@col_df)) return("@col_df must be a data frame")
+  if (!is.data.frame(x@col_df)) {
+    return("@col_df must be a data frame")
+  }
   NULL
 }
 
 .valid_SumExp_row_df <- function(x) {
-  if (!is.data.frame(x@row_df)) return("@row_df must be a data frame")
+  if (!is.data.frame(x@row_df)) {
+    return("@row_df must be a data frame")
+  }
   NULL
 }
 
@@ -86,7 +90,9 @@ setValidity("SumExp", function(object) {
     .valid_SumExp_row_df(object),
     .valid_SumExp_col_df(object)
   )
-  if (!is.null(er_m)) return(er_m)
+  if (!is.null(er_m)) {
+    return(er_m)
+  }
   TRUE
 })
 

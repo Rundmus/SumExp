@@ -10,15 +10,15 @@ split_columns(x, f)
 split_rows(x, f)
 }
 \arguments{
-\item{x}{A data frame list structure, e.g. \code{\link{SumExp}} object}
+\item{x}{A matrix-like object, e.g. \code{\link{SumExp}}}
 
 \item{f}{A factor vector to split by}
 }
 \value{
-A list of data frame list structures
+A list of matrix-like objects
 }
 \description{
-Split a data frame like structure, e.g. \code{\link{SumExp}} object, into groups based on a factor
+Split a matrix-like object, e.g. \code{\link{SumExp}}, into groups based on a factor
 column-/row-wise.
 }
 \examples{
