@@ -10,7 +10,8 @@ NULL
 #'   context of `row_df(x)` and `j` in the context of `col_df(x)`.
 #' @param ... Not used
 #' @param drop Not supported. Always `FALSE`
-#'
+#' @rdname Extract
+#' @aliases [,SumExp-method
 #' @export
 setMethod(
   "[", signature(x = "SumExp"),

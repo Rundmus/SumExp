@@ -104,6 +104,7 @@ setMethod("as.list", signature(x = "ListMatrix"), function(x) {
   stats::setNames(x@.Data, nm = x@names)
 })
 #' @rdname ListMatrix-class
+#' @aliases [[<-,ListMatrix-method
 #' @examples
 #' # Update a matrix in a ListMatrix object
 #' m3 <- m2
@@ -154,6 +155,7 @@ setMethod("dimnames", signature(x = "ListMatrix"), function(x) {
   dimnames(x[[1]])
 })
 #' @rdname ListMatrix-class
+#' @aliases dimnames<-,ListMatrix-method
 #' @export
 setMethod("dimnames<-", signature(x = "ListMatrix"), function(x, value) {
   for(ii in seq_along(x)) {
@@ -208,6 +210,14 @@ setMethod("show", signature(object = "ListMatrix"), function(object) {
 #' @export
 setMethod("print", signature(x = "ListMatrix"), function(x) show(x))
 
+#' @rdname ListMatrix-class
+#' @export
+setMethod("t", signature(x = "ListMatrix"), function(x) {
+  do.call("new", c(
+    lapply(x, t),
+    list(Class = "ListMatrix")
+  ))
+})
 
 
 

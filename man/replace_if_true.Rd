@@ -7,7 +7,7 @@
 \usage{
 replace_if_true(x, cond, value, ...)
 
-\method{replace_if_true}{ListMatrix}(x, cond, value)
+\method{replace_if_true}{ListMatrix}(x, cond, value, ...)
 }
 \arguments{
 \item{x}{A \link{ListMatrix} object.}

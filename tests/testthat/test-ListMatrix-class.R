@@ -27,4 +27,8 @@ test_that("methods for ListMatrix", {
     replace_if_true(l, l[["a"]] > 10, NA),
     "ListMatrix"
   )
+  # t() : transpose
+  expect_equal(rownames(t(l)), colnames(l))
+  expect_equal(colnames(t(l)), rownames(l))
+  expect_equal(l[["b"]], t(t(l[["b"]])))
 })

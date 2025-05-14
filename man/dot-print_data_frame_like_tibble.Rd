@@ -18,5 +18,7 @@ The input data frame
 Print a data frame like printing a tibble
 }
 \examples{
+not_export <- function() {
 .print_data_frame_like_tibble(iris)
+}
 }

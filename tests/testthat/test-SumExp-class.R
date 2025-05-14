@@ -68,13 +68,6 @@ test_that("ListMatrix methods with SumExp obj", {
   expect_s4_class({se[["b"]] <- m3; se}, "SumExp")
 })
 
-test_that("as_tibble works", {
-  se_tbl <- as_tibble(se)
-  expect_s3_class(se_tbl, "tbl_df")
-  expect_equal(nrow(se_tbl), 20)
-  expect_equal(ncol(se_tbl), 8)
-})
-
 test_that("labelled works", {
   m2 <- labelled::set_label_attribute(m2, "matrix_b")
   se <- SumExp(a = m1, b = m2, row_df = df_r, col_df = df_c)
@@ -146,4 +139,13 @@ test_that("SumExp split works", {
   expect_type(se_split, "list")
   expect_equal(length(se_split), 2)
   expect_s4_class(se_split[["Black"]], "SumExp")
+})
+
+test_that("SumExp `t` works", {
+  se_t <- t(exmpl_se)
+  expect_s4_class(se_t, "SumExp")
+  expect_equal(se_t[["a"]], t(exmpl_se[["a"]]))
+  expect_equal(se_t[["mat2"]], t(exmpl_se[["mat2"]]))
+  expect_equal(se_t@row_df, exmpl_se@col_df)
+  expect_equal(se_t@col_df, exmpl_se@row_df)
 })

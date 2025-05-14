@@ -9,6 +9,10 @@
 .Rbuildignore
 *.Rproj
 
+# Created for VSCode
+.vscode
+*.code-workspace
 
+# Created for local R
 .Rprofile
 

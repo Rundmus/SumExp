@@ -6,11 +6,13 @@
 \alias{ListMatrix}
 \alias{names,ListMatrix-method}
 \alias{as.list,ListMatrix-method}
+\alias{[[<-,ListMatrix,ANY,ANY-method}
 \alias{[[<-,ListMatrix-method}
 \alias{dim,ListMatrix-method}
 \alias{nrow,ListMatrix-method}
 \alias{ncol,ListMatrix-method}
 \alias{dimnames,ListMatrix-method}
+\alias{dimnames<-,ListMatrix,ANY-method}
 \alias{dimnames<-,ListMatrix-method}
 \alias{colnames,ListMatrix-method}
 \alias{colnames<-,ListMatrix-method}
@@ -18,13 +20,14 @@
 \alias{rownames<-,ListMatrix-method}
 \alias{show,ListMatrix-method}
 \alias{print,ListMatrix-method}
+\alias{t,ListMatrix-method}
 \title{A class for storing a list of matrices}
 \usage{
 \S4method{names}{ListMatrix}(x)
 
 \S4method{as.list}{ListMatrix}(x)
 
-\S4method{[[}{ListMatrix}(x, i) <- value
+\S4method{[[}{ListMatrix,ANY,ANY}(x, i) <- value
 
 \S4method{dim}{ListMatrix}(x)
 
@@ -34,7 +37,7 @@
 
 \S4method{dimnames}{ListMatrix}(x)
 
-\S4method{dimnames}{ListMatrix}(x) <- value
+\S4method{dimnames}{ListMatrix,ANY}(x) <- value
 
 \S4method{colnames}{ListMatrix}(x)
 
@@ -47,6 +50,8 @@
 \S4method{show}{ListMatrix}(object)
 
 \S4method{print}{ListMatrix}(x)
+
+\S4method{t}{ListMatrix}(x)
 }
 \arguments{
 \item{x, object}{A \code{\link{ListMatrix}} object}

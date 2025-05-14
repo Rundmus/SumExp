@@ -17,7 +17,7 @@ replace_if_true <- function(x, cond, value, ...) {
 #' @rdname replace_if_true
 #' @method replace_if_true ListMatrix
 #' @export
-replace_if_true.ListMatrix <- function(x, cond, value) {
+replace_if_true.ListMatrix <- function(x, cond, value, ...) {
   stopifnot(all(dim(x) == dim(cond)))
   stopifnot(is.logical(cond))
 

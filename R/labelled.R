@@ -13,7 +13,7 @@ copy_labels_list <- function(from, to) {
       return(to)
     }
   }
-  lapply(1:length(from), \(ii) {
+  lapply(seq_along(from), \(ii) {
     # Recursively copy labels through lists
     copy_labels_list(from[[ii]], to[[ii]])
   })
@@ -26,7 +26,7 @@ copy_labels_list <- function(from, to) {
 subset_copy_labels.data.frame <- function(from, idx) {
   out <- from[idx, , drop = FALSE]
   # Copy labels
-  for(ii in 1:ncol(out)) {
+  for(ii in seq_len(ncol(out))) {
     # [labelled::copy_labels()] does not handle nested lists.
     labelled::label_attribute(out[[ii]]) <- labelled::label_attribute(from[[ii]])
   }

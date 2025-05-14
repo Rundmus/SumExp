@@ -5,7 +5,7 @@ NULL
 #'
 #' @param x A [`SumExp`] object
 #' @param ... Not used
-#' @return A `tibble` with the row and column data frames as well as the matrices. Each matrix
+#' @returns A `tibble` with the row and column data frames as well as the matrices. Each matrix
 #'   in the [`SumExp`] object is represented as a long format tibble with columns `.row_id`,
 #'   `.col_id`, and the matrix name.
 #' @export
@@ -19,7 +19,7 @@ setMethod(
     row_tbl <- tibble::as_tibble(x@row_df, rownames = ".row_id")
 
     mx <- lapply(names(x), \(ii) {
-      out <- tibble::as_tibble(x[[ii]], rownames = ".row_id") |>
+      tibble::as_tibble(x[[ii]], rownames = ".row_id") |>
         tidyr::pivot_longer(cols = -c(.row_id), names_to = ".col_id", values_to = ii)
     })
     .join <- function(x, y) dplyr::full_join(x, y, by = c(".row_id", ".col_id"))

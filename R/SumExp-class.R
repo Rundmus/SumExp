@@ -10,6 +10,7 @@ NULL
 #' @slot row_df A data frame with additional information for rows
 #' @slot metadata A [`list`] with any other additional information
 #'
+#' @param x,object A [`SumExp`] object
 #' @examples
 #' nms <- list(LETTERS[1:4], letters[1:5])
 #' m1 <- matrix(sample(20), nrow = 4, dimnames = nms)
@@ -101,7 +102,6 @@ setValidity("SumExp", function(object) {
 
 #' Accessors for [`SumExp`] objects
 #'
-#' @param x A [`SumExp`] object
 #' @param value A data frame for `row_df<-` and `col_df<-` or a list for `metadata<-`
 #' @rdname SumExp-class
 #' @export
@@ -159,7 +159,9 @@ setMethod("metadata<-", signature(x = "SumExp", value = "list"), function(x, val
 #'
 #' @returns The input data frame
 #' @examples
+#' not_export <- function() {
 #' .print_data_frame_like_tibble(iris)
+#' }
 .print_data_frame_like_tibble <- function(x, ..., n = 5) {
   stopifnot(is.data.frame(x))
   # Add row names
@@ -210,3 +212,19 @@ setMethod("print", signature(x = "SumExp"), function(x) show(x))
 # })
 
 
+#' @rdname SumExp-class
+#' @export
+setMethod("t", signature(x = "SumExp"), function(x) {
+  data_lst <- lapply(x, \(.x) {
+    t(.x) |>
+      labelled::copy_labels_from(.x)     # Copy labels of matrices
+  })
+  # Swap row and column data frames
+  row_df <- subset_copy_labels.data.frame(x@col_df)
+  col_df <- subset_copy_labels.data.frame(x@row_df)
+  metadata <- x@metadata
+  do.call("new", c(
+    data_lst,
+    list(Class = "SumExp", col_df = col_df, row_df = row_df, metadata = metadata)
+  ))
+})
