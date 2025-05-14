@@ -5,7 +5,7 @@
 \alias{ggplot,SumExp-method}
 \title{Create a ggplot object from a SumExp object}
 \usage{
-ggplot(data, mapping = ggplot2::aes(), ..., environment = parent.frame())
+ggplot(data, mapping, ..., environment = parent.frame())
 
 \S4method{ggplot}{SumExp}(data, mapping = ggplot2::aes(), ..., environment = parent.frame())
 }

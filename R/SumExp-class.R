@@ -170,7 +170,11 @@ setMethod("metadata<-", signature(x = "SumExp", value = "list"), function(x, val
   if (nrow(x) > n) rownm <- paste0(rownm, "...")
   prefix <- "# - Row names:"
   max_width <- getOption("width") - nchar(prefix) - 4    # 4 for `...` and one extra
-  rownm <- paste(prefix, stringr::str_trunc(rownm, max_width))
+  if (nchar(rownm) > max_width) {     # Truncate row names
+    rownm <- substr(rownm, 1, max_width - 3)
+    rownm <- paste0(rownm, "...")
+  }
+  rownm <- paste(prefix, rownm)
 
   txt <- utils::capture.output(print(tibble::as_tibble(x), ..., n = n))
   txt[1] <- sub("tibble", "data.frame", txt[1])

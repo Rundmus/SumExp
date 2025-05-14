@@ -15,7 +15,7 @@ as_SummarizedExperiment(x, ...)
 \item{...}{Not used}
 }
 \value{
-A \code{\link{SummarizedExperiment}} object with the row and column data frames as well as the
+A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment}} object with the row and column data
 }
 \description{
 Coerce a SumExp object to a SummarizedExperiment object

@@ -43,7 +43,9 @@ setMethod(
 #' @export
 setGeneric(
   "ggplot",
-  function(data, mapping = ggplot2::aes(), ..., environment = parent.frame()) {
+  function(data, mapping, ..., environment = parent.frame()) {
+    rlang::check_installed("ggplot2")
+    
     standardGeneric("ggplot")
   }
 )
