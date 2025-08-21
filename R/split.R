@@ -10,7 +10,9 @@ NULL
 #' @param x A matrix-like object, e.g. [`SumExp`]
 #' @param f A factor vector to split by
 #'
-#' @returns A list of matrix-like objects
+#' @returns A list of matrix-like objects. If `[` is defined for the class of `x`, the same class
+#'   will be returned.
+#' @rdname split
 #' @md
 #' @examples
 #' se <- SumExp::exmpl_se
@@ -24,7 +26,7 @@ split_columns <- function(x, f) {
   split(x = seq_len(ncol(x)), f = f, drop = FALSE) |>
     lapply(function(i) x[, i, drop = FALSE])
 }
-#' @rdname split_columns
+#' @rdname split
 #' @export
 split_rows <- function(x, f) {
   stopifnot(length(f) == nrow(x))

@@ -56,7 +56,7 @@ setValidity("ListMatrix", function(object) {
     return("Names of matrices must be unique")
   }
 
-  for(ii in seq_along(object)) {
+  for (ii in seq_along(object)) {
     mat_i <- object[[ii]]
     if (!is.matrix(mat_i)) {
       return("Every element must be a matrix")
@@ -112,7 +112,7 @@ setMethod("as.list", signature(x = "ListMatrix"), function(x) {
 #' l[[2]] <- m3
 #' l
 #' @export
-setMethod("[[<-" , signature(x = "ListMatrix"), function(x, i, value) {
+setMethod("[[<-", signature(x = "ListMatrix"), function(x, i, value) {
   x <- callNextMethod()
   validObject(x)
   x
@@ -158,8 +158,8 @@ setMethod("dimnames", signature(x = "ListMatrix"), function(x) {
 #' @aliases dimnames<-,ListMatrix-method
 #' @export
 setMethod("dimnames<-", signature(x = "ListMatrix"), function(x, value) {
-  for(ii in seq_along(x)) {
-    dimnames(x[[ii]]) <- value
+  for (ii in seq_along(x@.Data)) {
+    dimnames(x@.Data[[ii]]) <- value
   }
   x
 })
@@ -173,8 +173,8 @@ setGeneric("colnames<-", function(x, value) standardGeneric("colnames<-"))
 #' @rdname ListMatrix-class
 #' @export
 setMethod("colnames<-", signature(x = "ListMatrix"), function(x, value) {
-  for(ii in seq_along(x)) {
-    colnames(x[[ii]]) <- value
+  for (ii in seq_along(x@.Data)) {
+    colnames(x@.Data[[ii]]) <- value
   }
   x
 })
@@ -188,8 +188,8 @@ setGeneric("rownames<-", function(x, value) standardGeneric("rownames<-"))
 #' @rdname ListMatrix-class
 #' @export
 setMethod("rownames<-", signature(x = "ListMatrix"), function(x, value) {
-  for(ii in seq_along(x)) {
-    rownames(x[[ii]]) <- value
+  for (ii in seq_along(x@.Data)) {
+    rownames(x@.Data[[ii]]) <- value
   }
   x
 })
@@ -199,7 +199,7 @@ setMethod("rownames<-", signature(x = "ListMatrix"), function(x, value) {
 setMethod("show", signature(object = "ListMatrix"), function(object) {
   d <- dim(object)
   cat("ListMatrix with", length(object), "matrices with dimension of", d)
-  for(ii in seq_along(object)) {
+  for (ii in seq_along(object)) {
     nm <- object@names[ii]
     if (!is.null(nm)) nm <- paste0("`", nm, "`")
     cat("\nMatrix", ii, nm, ":\n")
@@ -218,6 +218,3 @@ setMethod("t", signature(x = "ListMatrix"), function(x) {
     list(Class = "ListMatrix")
   ))
 })
-
-
-

@@ -151,6 +151,26 @@ setMethod("metadata<-", signature(x = "SumExp", value = "list"), function(x, val
   x
 })
 
+#' @rdname SumExp-class
+#' @export
+setMethod("colnames<-", signature(x = "SumExp"), function(x, value) {
+  l <- as(x, "ListMatrix")    # Convert to ListMatrix
+  colnames(l) <- value
+  x@.Data <- l
+  rownames(x@col_df) <- value
+  x
+})
+
+#' @rdname SumExp-class
+#' @export
+setMethod("rownames<-", signature(x = "SumExp"), function(x, value) {
+  l <- as(x, "ListMatrix")    # Convert to ListMatrix
+  rownames(l) <- value
+  x@.Data <- l
+  rownames(x@row_df) <- value
+  x
+})
+
 
 #' Print a data frame like printing a tibble
 #'

@@ -111,22 +111,34 @@ test_that("SumExp `[` works", {
   )
 
   # Evaluation with list element in row_df
-  exmpl_se@row_df$lst <- lapply(1:5, function(x) c(1:x))
-  expect_s4_class(exmpl_se[1:2, ], "SumExp")
-  sub_se <- exmpl_se[1:2, 3:5]
+  se <- exmpl_se
+  se@row_df$lst <- lapply(1:5, function(x) c(1:x))
+  expect_s4_class(se[1:2, ], "SumExp")
+  sub_se <- se[1:2, 3:5]
   expect_equal(labelled::get_label_attribute(sub_se@row_df[["y"]]), "Days")
-  exmpl_se@row_df$lst2 <- lapply(1:5, function(x) {
+  se@row_df$lst2 <- lapply(1:5, function(x) {
     out <- list("a" = c(1:x)[-1], "b" = list())
     labelled::label_attribute(out$b) <- "empty list"
     out
   })
-  expect_s4_class(exmpl_se[1:2, ], "SumExp")
-  sub_se <- exmpl_se[1:2, 3:5]
+  expect_s4_class(se[1:2, ], "SumExp")
+  sub_se <- se[1:2, 3:5]
   expect_equal(labelled::get_label_attribute(sub_se@row_df[["lst2"]][[1]]$b), "empty list")
 
   # # Immune to Matrix (Multiple dispatch of signatures)
   # box::use(Matrix)
-  # expect_s4_class(exmpl_se[quote(color == "Black"), ], "SumExp")
+  # expect_s4_class(se[quote(color == "Black"), ], "SumExp")
+})
+
+test_that("SumExp `colnames<-` & `rownames<-` works", {
+  se <- exmpl_se
+  colnames(se) <- c("aa", "bb", "cc", "dd", "ee", "ff")
+  expect_equal(colnames(se), c("aa", "bb", "cc", "dd", "ee", "ff"))
+  expect_equal(rownames(se@col_df), c("aa", "bb", "cc", "dd", "ee", "ff"))
+  rownames(se) <- c("alpha", "beta", "gamma", "delta", "epsilon")
+  expect_equal(rownames(se), c("alpha", "beta", "gamma", "delta", "epsilon"))
+  expect_equal(rownames(se@row_df), c("alpha", "beta", "gamma", "delta", "epsilon"))
+  expect_s4_class(se, "SumExp")
 })
 
 test_that("SumExp split works", {
